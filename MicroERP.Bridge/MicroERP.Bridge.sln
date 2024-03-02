@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroERP.Bridge", "MicroERP.Bridge.csproj", "{69095E61-2E21-4E71-9303-59F7782C69C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroERP.ModelsDB", "..\..\MicroERP\MicroERP.ModelsDB\MicroERP.ModelsDB.csproj", "{48D8DDF1-592F-43F5-A51E-6A10A7AFDAC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69095E61-2E21-4E71-9303-59F7782C69C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69095E61-2E21-4E71-9303-59F7782C69C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69095E61-2E21-4E71-9303-59F7782C69C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69095E61-2E21-4E71-9303-59F7782C69C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48D8DDF1-592F-43F5-A51E-6A10A7AFDAC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48D8DDF1-592F-43F5-A51E-6A10A7AFDAC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48D8DDF1-592F-43F5-A51E-6A10A7AFDAC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48D8DDF1-592F-43F5-A51E-6A10A7AFDAC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {691671D4-AFE4-4CD9-A638-683786E01E17}
+	EndGlobalSection
+EndGlobal
