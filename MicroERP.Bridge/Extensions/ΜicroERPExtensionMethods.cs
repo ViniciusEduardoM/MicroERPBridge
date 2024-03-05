@@ -15,7 +15,7 @@ using Flurl.Http.Configuration;
 
 namespace MicroERP.Bridge.Extensions
 {
-    public static class µERPExtensionMethods
+    public static class ΜicroERPExtensionMethods
     {
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="µERPConnection">Database connection ServiceLayer</param>
         /// <returns></returns>
         /// <exception cref="AddException">Throw an exception in case an error occurs in the POST method of the µERP Server</exception>
-        public static async Task Add(this IMicroERP microERPObject, µERPConnection µERPConnection)
+        public static async Task Add(this IMicroERP microERPObject, MicroERPConnection µERPConnection)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace MicroERP.Bridge.Extensions
                     }
                 }
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new AddException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -68,7 +68,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="µERPConnection">Database connection ServiceLayer</param>
         /// <returns></returns>
         /// <exception cref="UpdateException">Throw an exception in case an error occurs in the PATCH method of the µERP Server</exception>
-        public static async Task Update(this IMicroERP microERPObject, µERPConnection µERPConnection)
+        public static async Task Update(this IMicroERP microERPObject, MicroERPConnection µERPConnection)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace MicroERP.Bridge.Extensions
                     }
                 }
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new UpdateException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -113,7 +113,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="µERPConnection">Database connection ServiceLayer</param>
         /// <returns></returns>
         /// <exception cref="DeleteException">Throw an exception in case an error occurs in the DELETE method of the µERP Server</exception>
-        public static async Task Delete(this IMicroERP microERPObject, µERPConnection µERPConnection)
+        public static async Task Delete(this IMicroERP microERPObject, MicroERPConnection µERPConnection)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace MicroERP.Bridge.Extensions
 
                 await µERPConnection.Request($"{microERPObject.GetType().Name}{$"({microERPObject.Id})"}").DeleteAsync();
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new DeleteException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -139,7 +139,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="µERPConnection">Database connection ServiceLayer</param>
         /// <returns></returns>
         /// <exception cref="SearchException">Throw an exception in case an error occurs in the GET method of the µERP Server</exception>
-        public static async Task GetByKey(this IMicroERP microERPObject, string key, µERPConnection µERPConnection)
+        public static async Task GetByKey(this IMicroERP microERPObject, string key, MicroERPConnection µERPConnection)
         {
             try
             {
@@ -167,7 +167,7 @@ namespace MicroERP.Bridge.Extensions
                     }
                 }
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new SearchException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -182,7 +182,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="keys">Primary keys with want get object</param>
         /// <returns></returns>
         /// <exception cref="SearchException">Throw an exception in case an error occurs in the GET method of the µERP Server</exception>
-        public static async Task GetByKeys<IMicroERP>(this ICollection<IMicroERP> microERPObjects, µERPConnection µERPConnection, params string[] keys)
+        public static async Task GetByKeys<IMicroERP>(this ICollection<IMicroERP> microERPObjects, MicroERPConnection µERPConnection, params string[] keys)
         {
             try
             {
@@ -219,7 +219,7 @@ namespace MicroERP.Bridge.Extensions
                     microERPObjects.Add((IMicroERP)microERPObject);
                 }
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new SearchException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -234,7 +234,7 @@ namespace MicroERP.Bridge.Extensions
         /// <param name="µERPConnection">Database connection ServiceLayer</param>
         /// <returns></returns>
         /// <exception cref="SearchException">Throw an exception in case an error occurs in the GET method of the µERP Server</exception>
-        public static async Task GetByFilter<IMicroERP>(this ICollection<IMicroERP> microERPObjects, string parameters, µERPConnection µERPConnection)
+        public static async Task GetByFilter<IMicroERP>(this ICollection<IMicroERP> microERPObjects, string parameters, MicroERPConnection µERPConnection)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace MicroERP.Bridge.Extensions
                     .ToDictionary(keyValue => keyValue[0], keyValue => Uri.UnescapeDataString(keyValue[1]));
 
 
-                µERPRequest request = µERPConnection.Request($"{type.Name}");
+                MicroERPRequest request = µERPConnection.Request($"{type.Name}");
 
                 foreach (var kvp in queryDict)
                     request.SetQueryParam(kvp.Key, kvp.Value);
@@ -284,7 +284,7 @@ namespace MicroERP.Bridge.Extensions
                     microERPObjects.Add((IMicroERP)newmicroERPObj);
                 }
             }
-            catch (µERPException adEx)
+            catch (MicroERPException adEx)
             {
                 throw new SearchException(adEx.Message, adEx, adEx.InnerException);
             }
@@ -303,7 +303,7 @@ namespace MicroERP.Bridge.Extensions
             }
         }
 
-        public static µERPRequest SetQueryParam(this µERPRequest request, string name, string value)
+        public static MicroERPRequest SetQueryParam(this MicroERPRequest request, string name, string value)
         {
             request.FlurlRequest.SetQueryParam(name, value);
             return request;
@@ -311,9 +311,9 @@ namespace MicroERP.Bridge.Extensions
 
     }
 
-    public class µERPManyResquest
+    public class MicroERPManyResquest
     {
-        public µERPManyResquest(HttpMethod httpMethod, IMicroERP microERPObject)
+        public MicroERPManyResquest(HttpMethod httpMethod, IMicroERP microERPObject)
         {
             HttpMethod = httpMethod;
             MicroERPObject = microERPObject;

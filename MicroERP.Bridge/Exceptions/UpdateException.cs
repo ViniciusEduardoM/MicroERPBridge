@@ -6,9 +6,9 @@ namespace MicroERP.Bridge.Exceptions
 {
     public class UpdateException : Exception
     {
-        public µERPException ErrorDetails { get; set; }
+        public MicroERPException ErrorDetails { get; set; }
 
-        internal UpdateException(string message, µERPException errorDetails, Exception innerException)
+        internal UpdateException(string message, MicroERPException errorDetails, Exception innerException)
             : base(message, innerException)
         {
             ErrorDetails = errorDetails;

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace MicroERP.Bridge.Exceptions
 {
-    public class µERPException : Exception
+    public class MicroERPException : Exception
     {
+        public MicroERPException(string message) : base (message) { }
     }
 }

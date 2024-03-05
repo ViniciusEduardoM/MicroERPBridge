@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MicroERP\MicroERP.ModelsDB\MicroERP.ModelsDB.csproj" />
+    <ProjectReference Include="..\..\MicroERP\MicroERP\MicroERP.ModelsDB\MicroERP.ModelsDB.csproj" />
   </ItemGroup>
 
 </Project>

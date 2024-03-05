@@ -6,9 +6,9 @@ namespace MicroERP.Bridge.Exceptions
 {
     public class DeleteException : Exception
     {
-        public µERPException ErrorDetails { get; set; }
+        public MicroERPException ErrorDetails { get; set; }
 
-        internal DeleteException(string message, µERPException errorDetails, Exception innerException)
+        internal DeleteException(string message, MicroERPException errorDetails, Exception innerException)
             : base(message, innerException)
         {
             ErrorDetails = errorDetails;

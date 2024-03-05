@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 using System.Threading;
 using Flurl;
 using System.Linq;
+using MicroERP.ModelsDB.Models;
+using Newtonsoft.Json.Linq;
+using MicroERP.Bridge.Exceptions;
 
 namespace MicroERP.Bridge
 {
-    public class µERPConnection
+    public class MicroERPConnection
     {
         private string _token;
+
+        public LoginResponse _loginResponse;
+
+        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
         private readonly HttpStatusCode[] _returnCodesToRetry = new[]
         {
@@ -38,7 +45,23 @@ namespace MicroERP.Bridge
             private set => _token = value;
         }
 
-        public µERPConnection(Uri µERPRoot, string companyDB, string userName, string password)
+        public LoginResponse LoginResponse
+        {
+            // Returns a new object so the login control can't be manipulated externally
+            get => new LoginResponse()
+            {
+                Token = _loginResponse.Token,
+                ValidFrom = _loginResponse.ValidFrom,
+                ValidTo = _loginResponse.ValidTo
+            };
+
+            private set => _loginResponse = value;
+        }
+
+        public MicroERPConnection(string µERPRoot, string companyDB, string userName, string password)
+            : this(new Uri(µERPRoot), companyDB, userName, password) { }
+
+        private MicroERPConnection(Uri µERPRoot, string companyDB, string userName, string password)
         {
             if (string.IsNullOrWhiteSpace(companyDB))
                 throw new ArgumentException("companyDB can not be empty.");
@@ -54,35 +77,59 @@ namespace MicroERP.Bridge
             UserName = userName;
             Password = password;
             _token = string.Empty;
+
+            LoginInternalAsync().Wait();
         }
 
-        public async Task<string> LoginAsync() => await ExecuteLoginAsync();
+        public static async Task<MicroERPConnection> RegisterAsync(string µERPRoot, string CompanyDB, string UserName, string Password, string Email)
+        {
+            try
+            {
+                var loginResponse = await µERPRoot
+                       .AppendPathSegment("Register")
+                       .PostJsonAsync(new { CompanyDB, UserName, Password, Email });
 
+                return new MicroERPConnection(µERPRoot, CompanyDB, UserName, Password);
+            }
+            catch (FlurlHttpException ex)
+            {
+                if (ex.Call.HttpResponseMessage == null)
+                    throw;
+
+                throw new MicroERPException(await ex.GetResponseStringAsync());
+            }
+        }
+
+        public async Task<LoginResponse> LoginAsync() => await ExecuteLoginAsync();
 
         private async Task LoginInternalAsync() => await ExecuteLoginAsync();
 
-        private async Task<string> ExecuteLoginAsync(bool expectReturn = false)
+        private async Task<LoginResponse> ExecuteLoginAsync(bool expectReturn = false)
         {
             // Prevents multiple login requests in a multi-threaded scenario
-            //await _semaphoreSlim.WaitAsync();
+            await _semaphoreSlim.WaitAsync();
 
             try
             {
                 //if (forceLogin)
                 //    _lastRequest = default;
 
+
                 // Check whether the current session is valid
-                //if (DateTime.Now.Subtract(_lastRequest).TotalMinutes < _loginResponse.SessionTimeout)
-                //    return expectReturn ? LoginResponse : null;
-
-                
+                if ((_loginResponse == null) || (_loginResponse.ValidFrom > DateTime.UtcNow) || (_loginResponse.ValidTo < DateTime.UtcNow))
+                {
                     var loginResponse = await µERPRoot
-                        .AppendPathSegment("Login")
-                        .WithCookies(out var cookieJar)
-                        .PostJsonAsync(new { CompanyDB, UserName, Password })
-                        .ReceiveJson<string>();
+                       .AppendPathSegment("Login")
+                       .PostJsonAsync(new { CompanyDB, UserName, Password })
+                       .ReceiveJson<LoginResponse>();
 
-                return expectReturn ? loginResponse : null;
+                    _token = loginResponse.Token;
+
+                    return expectReturn ? loginResponse : null;
+                }
+                else
+                    return expectReturn ? LoginResponse : null;
+
             }
             catch (FlurlHttpException ex)
             {
@@ -90,21 +137,21 @@ namespace MicroERP.Bridge
                 {
                     if (ex.Call.HttpResponseMessage == null) throw;
                     var response = await ex.GetResponseJsonAsync<string>();
-                    throw new Exception("Erro");//SLException(response.Error.Message.Value, response.Error, ex);
+                    throw new Exception("Erro");//MicroERPException(response.Error.Message.Value, response.Error, ex);
                 }
                 catch { throw ex; }
             }
             finally
             {
-                //_semaphoreSlim.Release();
+                _semaphoreSlim.Release();
             }
         }
 
-        public µERPRequest Request(string resource) =>
-          new µERPRequest(this, new FlurlRequest(µERPRoot.AppendPathSegment(resource)));
+        public MicroERPRequest Request(string resource) =>
+          new MicroERPRequest(this, new FlurlRequest(µERPRoot.AppendPathSegment(resource)));
 
-        public µERPRequest Request(string resource, object id) =>
-            new µERPRequest(this, new FlurlRequest(µERPRoot.AppendPathSegment(id is string ? $"{resource}('{id}')" : $"{resource}({id})")));
+        public MicroERPRequest Request(string resource, object id) =>
+            new MicroERPRequest(this, new FlurlRequest(µERPRoot.AppendPathSegment(id is string ? $"{resource}('{id}')" : $"{resource}({id})")));
 
         internal async Task<T> ExecuteRequest<T>(Func<Task<T>> action)
         {
@@ -134,7 +181,7 @@ namespace MicroERP.Bridge
                             throw;
 
                         var response = await ex.GetResponseJsonAsync<string>();
-                        //exceptions.Add(new SLException(response.Error.Message.Value, response.Error, ex));
+                        //exceptions.Add(new MicroERPException(response.Error.Message.Value, response.Error, ex));
                     }
                     catch
                     {

@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace MicroERP.Bridge
 {
-    public class µERPRequest
+    public class MicroERPRequest
     {
-        private readonly µERPConnection _erpConnection;
+        private readonly MicroERPConnection _erpConnection;
 
         internal IFlurlRequest FlurlRequest { get; }
 
-        internal µERPRequest(µERPConnection connection, IFlurlRequest flurlRequest)
+        internal MicroERPRequest(MicroERPConnection connection, IFlurlRequest flurlRequest)
         {
             _erpConnection = connection;
             this.FlurlRequest = flurlRequest;
